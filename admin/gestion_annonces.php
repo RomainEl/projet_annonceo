@@ -31,8 +31,7 @@ if ( isset($_GET['action']) && $_GET['action'] == 'suppression' && isset($_GET['
 
 // Onglet affichage ajout/modif
 echo '<ul class="nav nav-tabs">
-                <li><a href="?action=affichage">Affichage des produits</a></li>
-                <li><a href="?action=ajout">Ajouter un produit</a></li>
+                <li><a href="?action=affichage">Affichage des annonces</a></li>
             </ul>';
 
         
@@ -40,38 +39,124 @@ echo '<ul class="nav nav-tabs">
 
 if ( $_POST )
 {
+    // On enregistre le produit en base
+
+    $titre = htmlspecialchars($_POST['titre']);	
+    $desc_c = htmlspecialchars($_POST['desc_c'], ENT_QUOTES);
+    $desc_l = htmlspecialchars($_POST['desc_l'], ENT_QUOTES);
+    $prix = htmlspecialchars($_POST['prix'], ENT_QUOTES);
+    $pays = htmlspecialchars($_POST['pays'], ENT_QUOTES);
+    $ville = htmlspecialchars($_POST['ville'], ENT_QUOTES);
+    $adresse = htmlspecialchars($_POST['adresse'], ENT_QUOTES);
+    $cp = htmlspecialchars($_POST['cp'], ENT_QUOTES);
+    
     $photo_bdd='';
-    if (isset($_POST["photo_actuelle"]))
+    if (isset($_POST["photo"]))
     {
-        $photo_bdd=$_POST['photo_actuelle'];
+        $photo_bdd=$_POST['photo']; 
     }
 
     // ajouter des controles sur le format, la taille et l'extension de l'image. 
 
     if (!empty($_FILES['photo']['name']))
     {
-        $nom_photo = $_POST['reference']. '-' . $_FILES['photo']['name'];
-        $photo_bdd = RACINE_SITE . 'photo/' . $nom_photo;   
+        $nom_photo = $_FILES['photo']['name'];
+        $photo_bdd = '/php/projet_annonceo/photo/'. $nom_photo;   
         $photo_dossier = $_SERVER['DOCUMENT_ROOT']. $photo_bdd;
 
         copy($_FILES['photo']['tmp_name'], $photo_dossier);
     }
 
-    // On enregistre le produit en base
+    $photo_bdd2='';
+    if (isset($_POST["photo2"]))
+    {
+        $photo_bdd2=$_POST['photo2'];
+    }
 
-    executeRequete('REPLACE INTO produit VALUES (:id_produit,:reference,:categorie,:titre,:description,:couleur,:taille,:public,:photo,:prix,:stock)',
-                    array('id_produit' => $_POST['id_produit'],
-                          'reference' => $_POST['reference'],
-                          'categorie' => $_POST['categorie'],
-                          'titre' => $_POST['titre'],
-                          'description' => $_POST['description'],
-                          'couleur' => $_POST['couleur'],
-                          'taille' => $_POST['taille'],
-                          'public' => $_POST['public'],
-                          'photo' => $photo_bdd,
-                          'prix' => $_POST['prix'],
-                          'stock' => $_POST['stock']
-                          
+    // ajouter des controles sur le format, la taille et l'extension de l'image. 
+
+    if (!empty($_FILES['photo2']['name']))
+    {
+        $nom_photo = $_FILES['photo2']['name'];
+        $photo_bdd2 = '/php/projet_annonceo/photo/'. $nom_photo;   
+        $photo_dossier = $_SERVER['DOCUMENT_ROOT']. $photo_bdd2;
+
+        copy($_FILES['photo2']['tmp_name'], $photo_dossier);
+    }
+    $photo_bdd3='';
+    if (isset($_POST["photo3"]))
+    {
+        $photo_bdd3=$_POST['photo3'];
+    }
+
+    // ajouter des controles sur le format, la taille et l'extension de l'image. 
+
+    if (!empty($_FILES['photo3']['name']))
+    {
+        $nom_photo = $_FILES['photo3']['name'];
+        $photo_bdd3 = '/php/projet_annonceo/photo/'. $nom_photo;   
+        $photo_dossier = $_SERVER['DOCUMENT_ROOT']. $photo_bdd3;
+
+        copy($_FILES['photo3']['tmp_name'], $photo_dossier);
+    }
+    $photo_bdd4='';
+    if (isset($_POST["photo4"]))
+    {
+        $photo_bdd4=$_POST['photo4'];
+    }
+
+    // ajouter des controles sur le format, la taille et l'extension de l'image. 
+
+    if (!empty($_FILES['photo4']['name']))
+    {
+        $nom_photo = $_FILES['photo4']['name'];
+        $photo_bdd4 = '/php/projet_annonceo/photo/'. $nom_photo;   
+        $photo_dossier = $_SERVER['DOCUMENT_ROOT']. $photo_bdd4;
+
+        copy($_FILES['photo4']['tmp_name'], $photo_dossier);
+    }
+
+    $photo_bdd5='';
+    if (isset($_POST["photo5"]))
+    {
+        $photo_bdd5=$_POST['photo5'];
+    }
+
+    // ajouter des controles sur le format, la taille et l'extension de l'image. 
+
+    if (!empty($_FILES['photo5']['name']))
+    {
+        $nom_photo = $_FILES['photo5']['name'];
+        $photo_bdd5 = '/php/projet_annonceo/photo/'. $nom_photo;   
+        $photo_dossier = $_SERVER['DOCUMENT_ROOT']. $photo_bdd5;
+
+        copy($_FILES['photo5']['tmp_name'], $photo_dossier);
+    }
+    
+    $req1 = $pdo->prepare('REPLACE INTO photo VALUES (NULL,:photo1,:photo2,:photo3,:photo4,:photo5)');
+    $req1->execute(array(
+        'photo1' => $photo_bdd,
+        'photo2' => $photo_bdd2,
+        'photo3' => $photo_bdd3,
+        'photo4' => $photo_bdd4,
+        'photo5' => $photo_bdd5
+    ));
+    $id_photo = $pdo->lastInsertId();
+
+    $req = $pdo->prepare("REPLACE INTO annonce VALUES (:id_annonce,:titre,:description_courte,:description_longue,:prix,:photo,:pays,:ville,:adresse,:code_postal,:membre_id,:photo_id,:categorie_id, NOW())");
+    $req->execute(array('id_annonce' => $_POST['id_annonce'],
+                        'titre' => $titre,
+                        'description_courte' => $desc_c,
+                        'description_longue' => $desc_l,
+                        'prix' => $prix,
+                        'photo' => $photo_bdd,
+                        'pays' => $pays,
+                        'ville' => $ville,
+                        'adresse' => $adresse,
+                        'code_postal' => $cp,
+                        'membre_id' => $_SESSION['membre']['id_membre'],
+                        'photo_id' => $id_photo,
+                        'categorie_id' => $_POST['cat']                           
                     ));
                     $contenu .= '<div class="alert alert-success>La team rocket s\'envole vers d\'autres cieux</div>';
                     $_GET['action'] = 'affichage';
@@ -85,7 +170,7 @@ if ( (isset($_GET['action']) && $_GET['action']=='affichage') || !isset($_GET['a
 
     $pdo->exec('USE annonceo');
 
-    $resul = $pdo->query('SELECT * FROM produit');
+    $resul = $pdo->query('SELECT * FROM annonce');
 
     echo '<table class="table table-hover"><tr>';
 
@@ -103,9 +188,17 @@ if ( (isset($_GET['action']) && $_GET['action']=='affichage') || !isset($_GET['a
     {
         echo "<tr>";
             foreach ($ligne as $indice => $information) {
+                    if ($indice == 'membre_id')
+                    {
+                        $information = '<a href="gestion_membre.php">'.$ligne['membre_id'].'</a>';
+                    } 
+                    if ($indice == 'categorie_id')
+                    {
+                        $information = '<a href="gestion_categories.php">'.$ligne['categorie_id'].'</a>';
+                    } 
                     if ( ($indice=='photo') && $information != '')
                     {
-                        $information= '<img class="img-thumbnail" src="'.$information.'"alt="'.$ligne['titre'].'">';
+                        $information= '<img class="img-thumbnail" src="'.$ligne['photo'].'"alt="'.$ligne['titre'].'">';
                     }
                     echo "<td>$information</td>";
             }
@@ -123,84 +216,93 @@ if ( (isset($_GET['action']) && $_GET['action']=='affichage') || !isset($_GET['a
  * 
  * */
 
-if ( isset($_GET['action']) && ( $_GET['action']=='ajout' ||  $_GET['action']=='modifier' ) ):
+if ( isset($_GET['action']) && ($_GET['action']=='modifier') ):
 
-    if ( !empty($_GET['id_produit']) )
+    if ( !empty($_GET['id_annonce']) )
     {
-        $resul = executeRequete("SELECT * FROM produit WHERE id_produit= :id_produit", array('id_produit' => $_GET['id_produit']));
-        $produit_actuel = $resul->fetch(PDO::FETCH_ASSOC);
-    }
-?>
-    <h3>Formulaire d'ajout ou de modification</h3>
-    <form action="" method="post" enctype="multipart/form-data">
-        <input type="hidden" id="id_produit" name='id_produit' value="<?= $produit_actuel['id_produit'] ?? 0 ?>">
-        
-        <label for="reference">Référence</label>
-        <br>
-        <input type="text" name="reference" id="reference" value="<?= $produit_actuel['reference'] ?? ''?>">
-        <br>
-        <label for="categorie">Catégorie</label>
-        <br>
-        <input type="text" name="categorie" id="categorie" value="<?= $produit_actuel['categorie'] ?? ''?>">
-        <br>
-        <label for="categorie">Description</label>
-        <br>
-        <textarea name="description" id="description"><?= $produit_actuel['description'] ?? ''?></textarea>
-        <br>
-        <label for="titre">Titre</label>
-        <br>
-        <input type="text" name="titre" id="titre" value="<?= $produit_actuel['titre'] ?? ''?>">
-        <br>
-        <label for="couleur">Couleur</label>
-        <br>
-        <input type="text" name="couleur" id="couleur" value="<?= $produit_actuel['taille'] ?? ''?>">
-        <br>
-        <label for="taille">Taille</label>
-        <br>
-        <select name="taille" id="taille">
-            <option <?= (isset($produit_actuel['taille']) && $produit_actuel['taille']= 'S') ? 'selected' : '' ?> value="S">S</option>
-            <option <?= (isset($produit_actuel['taille']) && $produit_actuel['taille']= 'M') ? 'selected' : '' ?> value="M">M</option>
-            <option <?= (isset($produit_actuel['taille']) && $produit_actuel['taille']= 'L') ? 'selected' : '' ?> value="L">L</option>
-            <option <?= (isset($produit_actuel['taille']) && $produit_actuel['taille']= 'XL') ? 'selected' : '' ?> value="XL">XL</option>
-        </select>
-        <br>
-        <br>
-        <label for="photo">Photo</label>
-        <input type="file" name="photo" id="photo">
-        <?php 
-            if ( isset($produit_actuel['photo']))
-            {
-                echo '<p>Vous pouvez uploader une nouvelle photo </p>';
-                echo '<img class="img-thumbnail" src="'.$produit_actuel['photo'].'" alt="'.$produit_actuel['titre'].'">';
-                echo '<input type="hidden" name="photo_actuelle" value="'.$produit_actuel['photo'].'">';
-                // cet input permet de remplir $_POST sur un indice "photo_actuelle" la valeur de l'url de la photo stockée en base. Ainsi, si on ne
-                // charge pas de nouvelle photo, l'url actuelle sera remise en base
-            }
-    
-        ?>
-    
-        <br>
-        <label for="public">Public</label>
-        <br>
-        <select name="public">
-            <option <?= (isset($produit_actuel['taille']) && $produit_actuel['taille']=='m') ? 'selected' : ''?> value="m">m</option>
-            <option <?= (isset($produit_actuel['taille']) && $produit_actuel['taille']=='f') ? 'selected' : ''?> value="f">f</option>
-            <option <?= (isset($produit_actuel['taille']) && $produit_actuel['taille']=='mixte') ? 'selected' : ''?> value="mixte">mixte</option>
-        </select>
-        <br>
-    
-        <label for="prix">Prix</label>
-        <input class="form-control" type="text" name="prix" id="prix" value="<?= $produit_actuel['prix'] ?? '' ?>">
-        <br>
-    
-        <label for="stock">Stock</label>
-        <input class="form-control" type="text" name="stock" id="stock" value="<?= $produit_actuel['stock'] ?? '' ?>">
-        <br>
-    
+        $result = $pdo->prepare("SELECT * FROM annonce WHERE id_annonce= :id_annonce");
 
-        <input id='bouton1' type='submit' value='Ajouter le produit' class='btn btn-primary btn-block'/>
-        
+        $result->execute(array('id_annonce' => $_GET['id_annonce']));
+        $annonce_actuelle = $result->fetch(PDO::FETCH_ASSOC);
+    }
+   
+?>
+    <h3>Formulaire de modification</h3>
+    <form method="post" action="" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Ajouter votre annonce</legend>
+            <input type="hidden" id="id_annonce" name='id_annonce' value="<?= $annonce_actuelle['id_annonce'] ?? 0 ?>">
+                <label for="titre" >Titre de l'annonce</label>
+                <br>
+                <input  type="text" id="titre" name='titre' value="<?= $annonce_actuelle['titre'] ?>">
+                <br>
+                <label for="desc_c" >Decription courte</label>
+                <br>
+                <textarea name="desc_c" id="desc_c" cols="40" rows="5"><?= $annonce_actuelle['description_courte'] ?></textarea>
+                <br>
+                <label for="desc_l" >Decription Longue</label>
+                <br>
+                <textarea name="desc_l" id="desc_l" cols="40" rows="10"><?= $annonce_actuelle['description_longue'] ?></textarea>
+                <br>
+                <label for="prix">Prix</label>
+                <br>
+                <input type="text" id="prix" name='prix' value="<?= $annonce_actuelle['prix'] ?>">
+                <br>
+                <label for="photo">Photo principale</label>
+                <br>
+                <input type="file" name="photo" id="photo">
+                <br>
+                <label for="photo2">Photo 2</label>
+                <br>
+                <input type="file" name="photo2" id="photo2">
+                <br>
+                <label for="photo3">Photo 3</label>
+                <br>
+                <input type="file" name="photo3" id="photo3">
+                <br>
+                <label for="photo4">Photo 4</label>
+                <br>
+                <input type="file" name="photo4" id="photo4">
+                <br>
+                <label for="photo5">Photo 5</label>
+                <br>
+                <input type="file" name="photo5" id="photo5">
+                <br>
+                <label for="pays">Pays</label>
+                <br>
+                <input type="text" id="pays" name='pays' value="<?= $annonce_actuelle['pays'] ?>">
+                <br>
+                <label for="ville">Ville</label>
+                <br>
+                <input type="text" id="ville" name='ville' value="<?= $annonce_actuelle['ville'] ?>">
+                <br>
+                <label for="cp">Code Postal</label>
+                <br>
+                <input type="text" id="cp" name='cp' value="<?= $annonce_actuelle['code_postal'] ?>">
+                <br>
+                <label for="adresse" >Adresse</label>
+                <br>
+                <textarea name="adresse" id="adresse" cols="40" rows="5"><?= $annonce_actuelle['titre'] ?></textarea>
+                <br>
+                <label for="cat">Catégorie</label>
+                <br>
+                    <select name="cat" id="cat">
+                        <?php
+                            $categories = $pdo->query('SELECT * FROM categorie');
+                            while ( $categorie = $categories->fetch(PDO::FETCH_ASSOC))
+                                {
+                                    echo '<option value="'.$categorie['id_categorie'].'">'.$categorie['titre'].'</option>';
+                                
+                                }
+                        ?>
+                    </select>
+                    <br>
+                
+                <input type="submit" value="Modifier mon annonce" class="btn btn-success">
+
+        </fieldset>
     </form>
+    
 <?php
 endif;
 require_once('../inc/footer.php');

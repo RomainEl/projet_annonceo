@@ -11,7 +11,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'deconnexion')
     //pour conserver le panier à la déconnexion;
 }
 if(estConnecte()){
-    header('location:profil.php'); // renvoie un entete au client pour demander la page profil
+    header('location:index.php'); // renvoie un entete au client pour demander la page profil
     exit(); //puis quitte le script
 }
 if(estConnecteEtAdmin()){
@@ -66,3 +66,4 @@ echo $contenu;
     <br>
     <button type="submit" class=" col-sm-offset-6 btn btn-primary">Connexion</button>  
 </form>
+

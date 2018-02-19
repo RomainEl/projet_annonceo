@@ -8,6 +8,8 @@
 <!-- liens css -->
 <link rel="stylesheet" href="<?= RACINE_SITE.'inc/css/bootstrap.min.css' ?>">
 <link rel="stylesheet" href="<?= RACINE_SITE.'inc/css/style.css' ?>">
+<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+
 </head>
 <body>
     <header>
@@ -55,9 +57,9 @@
             <ul class="dropdown-menu">
               <li><a href="<?= RACINE_SITE.'connexion.php' ?>">Connexion</a></li>
               <li><a href="<?= RACINE_SITE.'inscription.php' ?>">Inscription</a></li>
+              <li><a href="<?= RACINE_SITE.'connexion.php?action=deconnexion' ?>">Se déconnnecter</a></li>
             </ul>
           </li>
-
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->

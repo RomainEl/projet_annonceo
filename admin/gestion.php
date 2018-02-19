@@ -50,4 +50,6 @@ require_once('../inc/init.php');
     </div><!-- /.container-fluid -->
   </nav>
 </header>
-</body>
+
+<?php
+require_once ('../inc/footer.php');

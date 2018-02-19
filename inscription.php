@@ -68,7 +68,7 @@ if($_POST){
     //si tout va bien 
     //j'insère le nouveau membre dans la table membre (avec statut = 0)
     //je mets $inscription à true
-    if(!empty($contenu))
+    if(empty($contenu))
     {
         $result= $pdo->prepare("INSERT INTO membre VALUES (NULL,:pseudo,:mdp,:nom,:prenom,:telephone,:email,:civilite,0,NOW())");
 
@@ -132,3 +132,5 @@ if(!$inscription){
 
 <?php
 }
+
+require_once('inc/footer.php');
